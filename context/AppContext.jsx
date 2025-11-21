@@ -20,7 +20,7 @@ export const AppContextProvider = (props) => {
     const { getToken } = useAuth()
 
     const [products, setProducts] = useState([])
-    const [userData, setUserData] = useState(false)
+    const [userData, setUserData] = useState({ cartItems: {} })
     const [isSeller, setIsSeller] = useState(false)
     const [cartItems, setCartItems] = useState({})
 
@@ -45,11 +45,10 @@ export const AppContextProvider = (props) => {
                 setIsSeller(true)
             }
 
-            const token = await getToken()
             const { data } = await axios.get('/api/user/data', { withCredentials: true })
 
             if (data.success) {
-                setUserData(data.user)
+                setUserData({ ...data.user, cartItems: data.user.cartItems || {} })
                 setCartItems(data.user.cartItems)
             } else {
                 toast.error(data.message)
